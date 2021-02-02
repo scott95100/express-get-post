@@ -2,12 +2,14 @@ const express = require('express')
 const app = express()
 const expressLayouts = require('express-ejs-layouts')
 const fs = require('fs')
+const methodOverride = require('method-override')
 
 
 // MiddleWare
 // this will help us use our layout file
 app.use(expressLayouts)
 app.use(express.urlencoded({extended: false}));
+app.use(methodOverride('_method'))
 
 // for views use .ejs files
 app.set('view engine', 'ejs')
@@ -23,7 +25,19 @@ app.get('/dinosaurs', (req, res)=> {
     let dinos = fs.readFileSync('./dinosaurs.json')
     // take our data and put it in a more readable format
     dinos = JSON.parse(dinos)
-    console.log(dinos)
+    console.log(req.query.nameFilter)
+    let nameToFilterBy = req.query.nameFilter
+    
+    //if there is no submit of the form this will be undefined and we will return all dinos
+    if(nameToFilterBy) {
+        const newFilteredArray = dinos.filter((dinosaurObj)=> {
+            if(dinosaurObj.name.toLowerCase() === nameToFilterBy.toLocaleLowerCase()) {
+            return true
+            }
+        })
+        dinos = newFilteredArray
+    }
+    
     // in our views folder render this page
     res.render('dinosaurs/index', {dinos: dinos} )
 })
@@ -65,10 +79,22 @@ app.post('/dinosaurs', (req, res)=> {
     res.redirect('/dinosaurs')
     // this is coming from our form submit
     // we are going to look at the req.body
-    
-
 })
 
+app.delete('/dinosaurs/:idx', (req, res)=> {
+    const dinosaurs = fs.readFileSync('./dinosaurs.json')
+    const dinosaursArray = JSON.parse(dinosaurs)
+    //intermediate variable
+    let idx = Number(req.params.idx) //comes in as a string. need to change it to an int
+    //remove the dinosaur
+    dinosaursArray.splice(idx, 1);
+    // save the dinosaur array into the dinosaur.json file
+    fs.writeFileSync('./dinsaurs.json', JSON.stringify(dinosaursArray))
+    //redirect back to all dinosaurs
+    res.redirect('/dinosaurs')
+
+
+})
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, ()=> {
