@@ -81,20 +81,18 @@ app.post('/dinosaurs', (req, res)=> {
     // we are going to look at the req.body
 })
 
-app.delete('/dinosaurs/:idx', (req, res)=> {
-    const dinosaurs = fs.readFileSync('./dinosaurs.json')
-    const dinosaursArray = JSON.parse(dinosaurs)
-    //intermediate variable
-    let idx = Number(req.params.idx) //comes in as a string. need to change it to an int
-    //remove the dinosaur
+app.delete('/dinosaurs/:idx', (req, res) => {
+    const dinosaurs = fs.readFileSync('./dinosaurs.json');
+    const dinosaursArray = JSON.parse(dinosaurs);
+    // intermediate variable
+    let idx = Number(req.params.idx); // what is this datatype? comes in as a string, change to integer
+    // remove the dinosaur
     dinosaursArray.splice(idx, 1);
-    // save the dinosaur array into the dinosaur.json file
-    fs.writeFileSync('./dinsaurs.json', JSON.stringify(dinosaursArray))
-    //redirect back to all dinosaurs
-    res.redirect('/dinosaurs')
-
-
-})
+    // save the dinosaurs array into the dinosaurs.json file
+    fs.writeFileSync('./dinosaurs.json', JSON.stringify(dinosaursArray));
+    // redirect back to /dinosaurs route
+    res.redirect('/dinosaurs');
+});
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, ()=> {

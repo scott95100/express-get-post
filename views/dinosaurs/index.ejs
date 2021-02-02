@@ -1,16 +1,17 @@
-<p>Heres all my dinosaurs</p>
+<h2>Heres all my dinosaurs</h2>
 <form method="GET" action="/dinosaurs">
     <label for="nameFilter">Filter by Name</label>
     <input id="nameFilter" type="text" name="nameFilter">
     <input type="submit">
-  </form>
+</form>
+
 <ul>
-    <% for (idx = 0; idx < dinos.length; idx++) { %>
+    <% for (let idx = 0; idx < dinos.length; idx++) { %> 
         <% let dino = dinos[idx] %>
         <p><%= dino.name %></p>
         <p><%= dino.type %></p>
         <form method="POST" action="/dinosaurs/<%= idx %>?_method=DELETE">
-            <input type="submit" value="Delete">
+            <input type="submit" value='Delete'>
         </form>
     <% } %>
 
